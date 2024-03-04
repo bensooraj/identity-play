@@ -1,3 +1,4 @@
 notes/*
-identity/keycloak/*
+certs/*
+identity/keycloak/data/*
 *.env

@@ -1,0 +1,3 @@
+notes/*
+identity/keycloak/*
+*.env

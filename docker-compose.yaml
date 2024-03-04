@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+
+  identity:
+    image: quay.io/keycloak/keycloak:24.0.0
+    container_name: identity
+    restart: unless-stopped
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin123
+      KEYCLOAK_LOGLEVEL: INFO
+      ROOT_LOGLEVEL: INFO
+    ports:
+      - "8080:8080"
+      - "8787:8787"
+    command:
+      - start-dev
+      # - --features admin-fine-grained-authz
+    volumes:
+      - ./identity/keycloak:/opt/keycloak/data
+
+networks:
+  default:
+    name: identity-network

@@ -1,4 +1,6 @@
 notes/*
 certs/*
-identity/keycloak/data/*
 *.env
+
+database/mysql/data/*
+identity/keycloak/data/*

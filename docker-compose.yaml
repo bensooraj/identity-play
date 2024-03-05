@@ -12,14 +12,30 @@ services:
     volumes:
       - ./reverse-proxy/nginx/conf/:/etc/nginx/conf.d/:ro
       - ./certs:/etc/nginx/ssl
-
+  
+  database:
+    image: mysql:8.0
+    container_name: database
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    env_file:
+      - ./database/mysql/.env
+      - ./identity/keycloak/database.env
+    volumes:
+      - ./database/mysql/data:/var/lib/mysql
+      - ./database/mysql/init-scripts:/docker-entrypoint-initdb.d
+    # environment:
+      # MYSQL_ROOT_PASSWORD: root123
+  
   identity:
     image: quay.io/keycloak/keycloak:24.0.0
     container_name: identity
     restart: unless-stopped
+    env_file:
+      - ./identity/keycloak/.env
+      - ./identity/keycloak/database.env
     environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin123
       # Logging
       KEYCLOAK_LOGLEVEL: INFO
       ROOT_LOGLEVEL: INFO
@@ -34,11 +50,14 @@ services:
       - "8443:8443"
       - "8787:8787"
     command:
-      - start-dev
+      - start
       # - --features admin-fine-grained-authz
     volumes:
       - ./identity/keycloak/data:/opt/keycloak/data
       - ./certs:/opt/certificates
+    depends_on:
+      - reverse-proxy
+      - database
 
 networks:
   default:
